@@ -1,66 +1,63 @@
+import { collection, getDocs, orderBy, query } from "firebase/firestore";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { db } from "../../services/firebaseConnection";
 
-const cars = [
-  {
-    img: "https://www2.mercedes-benz.com.br/content/brazil/pt_BR/passengercars/models/suv/c167-fl-23-1/overview/_jcr_content/root/responsivegrid/highlight/slider/image_374337238.component.damq1.3396175832338.jpg/040U.jpg",
-    car: " GLE Coupé",
-    fabrication: "2023/2024",
-    km: "50.000",
-    price: "R$200.000",
-    location: "São Paulo",
-  },
-  {
-    img: "https://www2.mercedes-benz.com.br/content/brazil/pt_BR/passengercars/models/suv/c167-fl-23-1/overview/_jcr_content/root/responsivegrid/highlight/slider/image_374337238.component.damq1.3396175832338.jpg/040U.jpg",
-    car: " GLE Coupé",
-    fabrication: "2023/2024",
-    km: "50.000",
-    price: "R$200.000",
-    location: "São Paulo",
-  },
-  {
-    img: "https://www2.mercedes-benz.com.br/content/brazil/pt_BR/passengercars/models/suv/c167-fl-23-1/overview/_jcr_content/root/responsivegrid/highlight/slider/image_374337238.component.damq1.3396175832338.jpg/040U.jpg",
-    car: " GLE Coupé",
-    fabrication: "2023/2024",
-    km: "50.000",
-    price: "R$200.000",
-    location: "São Paulo",
-  },
-  {
-    img: "https://www2.mercedes-benz.com.br/content/brazil/pt_BR/passengercars/models/suv/c167-fl-23-1/overview/_jcr_content/root/responsivegrid/highlight/slider/image_374337238.component.damq1.3396175832338.jpg/040U.jpg",
-    car: " GLE Coupé",
-    fabrication: "2023/2024",
-    km: "50.000",
-    price: "R$200.000",
-    location: "São Paulo",
-  },
-  {
-    img: "https://www2.mercedes-benz.com.br/content/brazil/pt_BR/passengercars/models/suv/c167-fl-23-1/overview/_jcr_content/root/responsivegrid/highlight/slider/image_374337238.component.damq1.3396175832338.jpg/040U.jpg",
-    car: " GLE Coupé",
-    fabrication: "2023/2024",
-    km: "50.000",
-    price: "R$200.000",
-    location: "São Paulo",
-  },
-  {
-    img: "https://www2.mercedes-benz.com.br/content/brazil/pt_BR/passengercars/models/suv/c167-fl-23-1/overview/_jcr_content/root/responsivegrid/highlight/slider/image_374337238.component.damq1.3396175832338.jpg/040U.jpg",
-    car: " GLE Coupé",
-    fabrication: "2023/2024",
-    km: "50.000",
-    price: "R$200.000",
-    location: "São Paulo",
-  },
-  {
-    img: "https://www2.mercedes-benz.com.br/content/brazil/pt_BR/passengercars/models/suv/c167-fl-23-1/overview/_jcr_content/root/responsivegrid/highlight/slider/image_374337238.component.damq1.3396175832338.jpg/040U.jpg",
-    car: " GLE Coupé",
-    fabrication: "2023/2024",
-    km: "50.000",
-    price: "R$200.000",
-    location: "São Paulo",
-  },
-];
+interface CarsProps {
+  img: ImageProps[];
+  name: string;
+  year: string;
+  km: string;
+  price: string | number;
+  city: string;
+  uid: string;
+  id: string;
+  owner: string;
+  model: string;
+  email: string;
+}
+
+interface ImageProps {
+  name: string;
+  uid: string;
+  url: string;
+}
 
 export default function Home() {
   const navigate = useNavigate();
+
+  const [cars, setCars] = useState<CarsProps[]>([]);
+
+  useEffect(() => {
+    function loadCars() {
+      const carsRef = collection(db, "cars");
+      const queryRef = query(carsRef, orderBy("created", "desc"));
+
+      getDocs(queryRef).then((snapshot) => {
+        const listCars = [] as CarsProps[];
+
+        snapshot.forEach((doc) => {
+          listCars.push({
+            id: doc.id,
+            name: doc.data().name,
+            model: doc.data().model,
+            year: doc.data().year,
+            km: doc.data().km,
+            city: doc.data().city,
+            price: doc.data().price,
+            img: doc.data().images,
+            uid: doc.data().uid,
+            owner: doc.data().owner,
+            email: doc.data().email,
+          });
+        });
+
+        setCars(listCars);
+      });
+    }
+
+    loadCars();
+  }, []);
 
   function handleDetailsCar(id: number) {
     navigate(`/details/${id}`);
@@ -90,16 +87,21 @@ export default function Home() {
               key={index}
               className="bg-white flex flex-col  rounded-lg shadow-xl border-2"
             >
-              <img src={item.img} alt={item.car} className="rounded-t-lg" />
+              <img
+                src={item.img.length > 0 ? item.img[0].url : ""}
+                alt={item.uid}
+                className="rounded-t-lg"
+              />
               <div className="p-3 flex flex-col gap-2">
-                <h1>{item.car}</h1>
+                <h1>{item.name}</h1>
+                <h1>{item.model}</h1>
                 <div className="flex gap-3">
-                  <p>{item.fabrication}</p>
+                  <p>{item.year}</p>
                   <p>{item.km}KM</p>
                 </div>
                 <p>{item.price}</p>
                 <hr />
-                <p>{item.location}</p>
+                <p>{item.city}</p>
                 <button
                   onClick={() => handleDetailsCar(index)}
                   className="p-3 bg-green-700 rounded-lg text-white text-base font-semibold"
