@@ -55,7 +55,7 @@ export default function Register() {
           uid: user.user.uid,
         });
 
-        navigate("/dashboard", { replace: true });
+        navigate("/", { replace: true });
         console.log("Cadastrado com sucesso");
       })
       .catch((error) => {

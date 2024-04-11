@@ -36,7 +36,7 @@ export default function Login() {
       .then((user) => {
         console.log("Logado com sucesso");
         console.log(user);
-        navigate("/dashboard", { replace: true });
+        navigate("/", { replace: true });
       })
       .catch((error) => {
         alert("Email ou senha inválidos");

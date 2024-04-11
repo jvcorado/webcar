@@ -1,6 +1,6 @@
 import { collection, getDocs, orderBy, query } from "firebase/firestore";
 import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { db } from "../../services/firebaseConnection";
 
 interface CarsProps {
@@ -24,9 +24,8 @@ interface ImageProps {
 }
 
 export default function Home() {
-  const navigate = useNavigate();
-
   const [cars, setCars] = useState<CarsProps[]>([]);
+  const [loadImages, setLoadImages] = useState<string[]>([]);
 
   useEffect(() => {
     function loadCars() {
@@ -59,8 +58,8 @@ export default function Home() {
     loadCars();
   }, []);
 
-  function handleDetailsCar(id: number) {
-    navigate(`/details/${id}`);
+  function handleImageLoad(id: string) {
+    setLoadImages((prevImagesLoads) => [...prevImagesLoads, id]);
   }
 
   return (
@@ -81,16 +80,27 @@ export default function Home() {
       </h1>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3  xl:grid-cols-4 gap-10">
-        {cars.map((item, index) => {
+        {cars.map((item) => {
           return (
-            <div
-              key={index}
+            <Link
+              to={`/details/${item.id}`}
+              key={item.id}
               className="bg-white flex flex-col  rounded-lg shadow-xl border-2"
             >
+              <div
+                className="w-full h-72 bg-gray-200"
+                style={{
+                  display: loadImages.includes(item.id) ? "none" : "block",
+                }}
+              ></div>
               <img
                 src={item.img.length > 0 ? item.img[0].url : ""}
                 alt={item.uid}
-                className="rounded-t-lg"
+                className="rounded-t-lg  max-h-72"
+                onLoad={() => handleImageLoad(item.id)}
+                style={{
+                  display: loadImages.includes(item.id) ? "block" : "none",
+                }}
               />
               <div className="p-3 flex flex-col gap-2">
                 <h1>{item.name}</h1>
@@ -102,14 +112,9 @@ export default function Home() {
                 <p>{item.price}</p>
                 <hr />
                 <p>{item.city}</p>
-                <button
-                  onClick={() => handleDetailsCar(index)}
-                  className="p-3 bg-green-700 rounded-lg text-white text-base font-semibold"
-                >
-                  Detalhes
-                </button>
+                <p>{item.owner}</p>
               </div>
-            </div>
+            </Link>
           );
         })}
       </div>
