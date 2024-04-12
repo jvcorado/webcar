@@ -1,7 +1,7 @@
 import { useContext, useEffect, useState } from "react";
 import { AuthContext } from "../../context/AuthContext";
 import PanelDashboard from "../../components/panelDashboard";
-import { db } from "../../services/firebaseConnection";
+import { db, storage } from "../../services/firebaseConnection";
 import {
   collection,
   deleteDoc,
@@ -11,6 +11,9 @@ import {
   where,
 } from "firebase/firestore";
 import { FiTrash2 } from "react-icons/fi";
+import { deleteObject, ref } from "firebase/storage";
+import CardCar from "../../components/cardCar";
+import { Link } from "react-router-dom";
 
 interface CarsProps {
   img: ImageProps[];
@@ -81,25 +84,37 @@ export default function Dashboard() {
     setLoadImages((prevImagesLoads) => [...prevImagesLoads, id]);
   }
 
-  function handleCarRemove(item: CarsProps) {
-    const carDocRef = doc(db, "cars", item.id); // Referência ao documento que será excluído
+  async function handleCarRemove(car: CarsProps) {
+    const ItemCar = car;
 
-    deleteDoc(carDocRef)
-      .then(() => {
-        alert("Car removed successfully!");
-        setCars(cars.filter((car) => car.id! == item.id));
-      })
-      .catch((error) => {
-        console.error("Error removing car:", error);
-      });
+    const carDocRef = doc(db, "cars", ItemCar.id);
+    await deleteDoc(carDocRef);
+
+    ItemCar.img.map(async (images) => {
+      const imagePath = `images/${images.uid}/${images.name}`;
+      const imageRef = ref(storage, imagePath);
+
+      try {
+        await deleteObject(imageRef);
+        setCars(cars.filter((item) => item.id !== ItemCar.id));
+      } catch (error) {
+        console.log("Erro ao remover imagem", error);
+      }
+    });
   }
 
   return (
     <div className=" flex flex-col gap-5 ">
       <PanelDashboard />
-      {/*       <h1 className="text-lg  md:text-3xl">
-        Seu carros cadastrado na plataforma {user?.name}
-      </h1> */}
+
+      {cars.length === 0 ? (
+        <p className="text-lg  md:text-3xl leading-10">
+          Crie seu primeiro anúncio:{" "}
+          <Link to={"/dashboard/new-car"}>Criar anúncio</Link>
+        </p>
+      ) : (
+        <p className="text-lg  md:text-3xl leading-10">Seus anúncios:</p>
+      )}
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3  xl:grid-cols-4 gap-10">
         {cars.map((item) => {
@@ -126,23 +141,24 @@ export default function Dashboard() {
 
               <button
                 onClick={() => handleCarRemove(item)}
-                className="absolute mx-auto flex items-center justify-center w-full h-full rounded-full opacity-0 hover:opacity-100 transition-all"
+                className="absolute  mx-auto flex items-center justify-center w-full h-full rounded-full opacity-0 hover:opacity-100 transition-all"
               >
-                <FiTrash2 size={40} color="red" />
+                <FiTrash2
+                  size={50}
+                  color="red"
+                  className="bg-white p-3 rounded-full shadow-2xl"
+                />
               </button>
 
-              <div className="p-3 flex flex-col gap-2">
-                <h1>{item.name}</h1>
-                <h1>{item.model}</h1>
-                <div className="flex gap-3">
-                  <p>{item.year}</p>
-                  <p>{item.km}KM</p>
-                </div>
-                <p>{item.price}</p>
-                <hr />
-                <p>{item.city}</p>
-                <p>{item.owner}</p>
-              </div>
+              <CardCar
+                name={item.name}
+                city={item.city}
+                km={item.km}
+                model={item.model}
+                price={item.price}
+                year={item.year}
+                key={item.id}
+              />
             </div>
           );
         })}

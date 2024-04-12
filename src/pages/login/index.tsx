@@ -54,7 +54,10 @@ export default function Login() {
 
   return (
     <div className="container mx-auto flex flex-col gap-5 items-center justify-center h-screen px-5 max-w-[500px]  ">
-      <img src={Logo} alt="Web Carros" className="w-[300px]" />
+      <Link to={"/"}>
+        <img src={Logo} alt="Web Carros" className="w-[300px]" />
+      </Link>
+
       <form
         onSubmit={handleSubmit(onSubmit)}
         className="flex flex-col w-full gap-5"

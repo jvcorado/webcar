@@ -45,7 +45,6 @@ interface ImageProps {
 
 export default function New() {
   const { user } = useContext(AuthContext);
-
   const [carImages, setCarImages] = useState<ImageProps[]>([]);
 
   const {
@@ -156,8 +155,8 @@ export default function New() {
     <div className="flex flex-col gap-5 ">
       <PanelDashboard />
 
-      <div className="flex flex-col lg:flex-row  gap-5">
-        <button className="relative  border-2 p-10 cursor-pointer w-48 flex items-center justify-center rounded-lg">
+      <div className="flex flex-col-reverse lg:flex-row  gap-5">
+        <button className="relative  border-2 p-10 cursor-pointer w-full md:w-48 flex items-center justify-center rounded-lg">
           <div className="absolute cursor-pointer ">
             <FiUpload size={35} />
           </div>
@@ -172,26 +171,55 @@ export default function New() {
           </div>
         </button>
 
-        {carImages.map((item) => {
-          return (
+        {/* DESKTOP */}
+        {carImages.map((item) => (
+          <div
+            key={item.uid}
+            className="hidden md:flex relative items-center justify-center rounded-lg"
+          >
+            <img
+              src={item.previewUrl}
+              alt={item.name}
+              className="w-full  object-cover rounded-lg h-52 md:h-32"
+            />
+            <button
+              onClick={() => handleDeleteImage(item)}
+              className="absolute opacity-0 hover:opacity-100 w-full h-full flex items-center justify-center transition-all"
+            >
+              <MdDelete
+                size={50}
+                color="red"
+                className="shadow-2xl bg-white p-3 rounded-full"
+              />
+            </button>
+          </div>
+        ))}
+
+        {/* MOBILE */}
+        <div className="overflow-x-auto md:hidden flex gap-3 w-full max-w-[100%] ">
+          {carImages.map((item) => (
             <div
               key={item.uid}
-              className="relative flex items-center justify-center  rounded-lg"
+              className=" relative min-w-full flex items-center justify-center rounded-lg"
             >
               <img
                 src={item.previewUrl}
                 alt={item.name}
-                className="w-full object-cover rounded-lg h-32 "
+                className="w-full  object-cover rounded-lg h-52 md:h-32"
               />
               <button
                 onClick={() => handleDeleteImage(item)}
-                className="absolute opacity-0 hover:opacity-100  w-full h-full flex items-center justify-center transition-all"
+                className="absolute opacity-0 hover:opacity-100 w-full h-full flex items-center justify-center transition-all"
               >
-                <MdDelete size={40} color="red" className="shadow-2xl" />
+                <MdDelete
+                  size={50}
+                  color="red"
+                  className="shadow-2xl bg-white p-3 rounded-full"
+                />
               </button>
             </div>
-          );
-        })}
+          ))}
+        </div>
       </div>
 
       <form onSubmit={handleSubmit(onSubmit)} className=" flex flex-col gap-5 ">
@@ -220,31 +248,31 @@ export default function New() {
             <label>Ano</label>
             <Input
               name="year"
-              placeholder="Ex: 2014"
-              type="number"
+              placeholder="Ex: 2014/2015"
+              type="text"
               error={errors.year?.message}
               register={register}
             />
           </div>
           <div className="flex-1">
-            <label>Km rodados</label>
+            <label>Km</label>
             <Input
               name="km"
               placeholder="Ex: 50.000"
-              type="number"
+              type="text"
               error={errors.km?.message}
               register={register}
             />
           </div>
         </div>
 
-        <div className="flex justify-between items-center gap-5">
+        <div className="flex flex-col md:flex-row md:justify-between md:items-center gap-5">
           <div className="flex-1">
             <label>Preço do carro</label>
             <Input
               name="price"
               placeholder="Ex: 70.000"
-              type="number"
+              type="text"
               error={errors.price?.message}
               register={register}
             />
