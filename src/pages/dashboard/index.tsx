@@ -14,6 +14,7 @@ import { FiTrash2 } from "react-icons/fi";
 import { deleteObject, ref } from "firebase/storage";
 import CardCar from "../../components/cardCar";
 import { Link } from "react-router-dom";
+import CardCarLoad from "../../components/cardCarLoad";
 
 interface CarsProps {
   img: ImageProps[];
@@ -39,6 +40,7 @@ export default function Dashboard() {
   const { user } = useContext(AuthContext);
   const [loadImages, setLoadImages] = useState<string[]>([]);
   const [cars, setCars] = useState<CarsProps[]>([]);
+  const [load, setLoad] = useState(false);
 
   useEffect(() => {
     function loadCarsDash() {
@@ -70,6 +72,7 @@ export default function Dashboard() {
           });
 
           setCars(listCars);
+          setLoad(true);
           console.log(listCars);
         })
         .catch((error) => {
@@ -106,63 +109,67 @@ export default function Dashboard() {
   return (
     <div className=" flex flex-col gap-5 ">
       <PanelDashboard />
+      {!load && <CardCarLoad />}
 
-      {cars.length === 0 ? (
+      {load && cars.length === 0 && (
         <p className="text-lg  md:text-3xl leading-10">
           Crie seu primeiro anúncio:{" "}
           <Link to={"/dashboard/new-car"}>Criar anúncio</Link>
         </p>
-      ) : (
-        <p className="text-lg  md:text-3xl leading-10">Seus anúncios:</p>
       )}
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3  xl:grid-cols-4 gap-10">
-        {cars.map((item) => {
-          return (
-            <div
-              key={item.id}
-              className="relative bg-white flex flex-col  rounded-lg shadow-xl border-2"
-            >
-              <div
-                className="w-full h-72 bg-gray-200"
-                style={{
-                  display: loadImages.includes(item.id) ? "none" : "block",
-                }}
-              ></div>
-              <img
-                src={item.img.length > 0 ? item.img[0].url : ""}
-                alt={item.uid}
-                className="rounded-t-lg  max-h-72"
-                onLoad={() => handleImageLoad(item.id)}
-                style={{
-                  display: loadImages.includes(item.id) ? "block" : "none",
-                }}
-              />
+      {load && cars.length >= 1 && (
+        <>
+          <p className="text-lg  md:text-3xl leading-10">Seus anúncios:</p>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3  xl:grid-cols-4 gap-10">
+            {cars.map((item) => {
+              return (
+                <div
+                  key={item.id}
+                  className="relative bg-white flex flex-col  rounded-lg shadow-xl border-2"
+                >
+                  <div
+                    className="w-full min-h-52 rounded-t-lg bg-gray-200 animate-pulse"
+                    style={{
+                      display: loadImages.includes(item.id) ? "none" : "block",
+                    }}
+                  ></div>
+                  <img
+                    src={item.img.length > 0 ? item.img[0].url : ""}
+                    alt={item.uid}
+                    className="rounded-t-lg  min-h-52 object-center object-cover max-h-52 "
+                    onLoad={() => handleImageLoad(item.id)}
+                    style={{
+                      display: loadImages.includes(item.id) ? "block" : "none",
+                    }}
+                  />
 
-              <button
-                onClick={() => handleCarRemove(item)}
-                className="absolute  mx-auto flex items-center justify-center w-full h-full rounded-full opacity-0 hover:opacity-100 transition-all"
-              >
-                <FiTrash2
-                  size={50}
-                  color="red"
-                  className="bg-white p-3 rounded-full shadow-2xl"
-                />
-              </button>
+                  <button
+                    onClick={() => handleCarRemove(item)}
+                    className="absolute  mx-auto flex items-center justify-center w-full h-full rounded-full opacity-0 hover:opacity-100 transition-all"
+                  >
+                    <FiTrash2
+                      size={50}
+                      color="red"
+                      className="bg-white p-3 rounded-full shadow-2xl"
+                    />
+                  </button>
 
-              <CardCar
-                name={item.name}
-                city={item.city}
-                km={item.km}
-                model={item.model}
-                price={item.price}
-                year={item.year}
-                key={item.id}
-              />
-            </div>
-          );
-        })}
-      </div>
+                  <CardCar
+                    name={item.name}
+                    city={item.city}
+                    km={item.km}
+                    model={item.model}
+                    price={item.price}
+                    year={item.year}
+                    key={item.id}
+                  />
+                </div>
+              );
+            })}
+          </div>
+        </>
+      )}
     </div>
   );
 }

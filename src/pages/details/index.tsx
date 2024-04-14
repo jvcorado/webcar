@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { db } from "../../services/firebaseConnection";
 import { FaWhatsapp } from "react-icons/fa";
+import CardCarLoad from "../../components/cardCarLoad";
 interface CarsProps {
   img: ImageProps[];
   name: string;
@@ -30,6 +31,7 @@ export default function Details() {
   const { id } = useParams();
   const [car, setCar] = useState<CarsProps>();
   const [loadImages, setLoadImages] = useState<string[]>([]);
+  const [load, setLoad] = useState(false);
 
   useEffect(() => {
     async function loadCarDetail() {
@@ -58,7 +60,7 @@ export default function Details() {
         });
       });
 
-      console.log(carsRef);
+      setLoad(true);
     }
 
     loadCarDetail();
@@ -70,7 +72,9 @@ export default function Details() {
 
   return (
     <div>
-      {car && (
+      {!load && <CardCarLoad />}
+
+      {load && car && (
         <main
           key={car?.id}
           className="relative bg-white flex flex-col gap-5 rounded-lg shadow-xl border-2"

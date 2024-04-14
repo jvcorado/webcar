@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { db } from "../../services/firebaseConnection";
 import CardCar from "../../components/cardCar";
+import CardCarLoad from "../../components/cardCarLoad";
 
 interface CarsProps {
   img: ImageProps[];
@@ -27,6 +28,7 @@ interface ImageProps {
 export default function Home() {
   const [cars, setCars] = useState<CarsProps[]>([]);
   const [loadImages, setLoadImages] = useState<string[]>([]);
+  const [load, setLoad] = useState(false);
 
   useEffect(() => {
     function loadCars() {
@@ -53,6 +55,7 @@ export default function Home() {
         });
 
         setCars(listCars);
+        setLoad(true);
       });
     }
 
@@ -76,52 +79,57 @@ export default function Home() {
         </button>
       </div>
 
-      {cars.length === 0 ? (
+      {!load && <CardCarLoad />}
+
+      {load && cars.length === 0 && (
         <h1 className="text-center text-xl md:text-3xl 2xl:text-4xl md:my-5 xl:my-10 text-[#2E2E37]">
           No momento não temos nenhum carro anunciado
         </h1>
-      ) : (
-        <h1 className="text-center text-xl md:text-3xl 2xl:text-4xl md:my-5 xl:my-10 text-[#2E2E37]">
-          Carros novos e seminovos no Brasil...
-        </h1>
       )}
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3  xl:grid-cols-4 gap-10">
-        {cars.map((item) => {
-          return (
-            <Link
-              to={`/details/${item.id}`}
-              key={item.id}
-              className="bg-white flex flex-col rounded-lg shadow-xl border-2"
-            >
-              <div
-                className="w-full  max-h-52 bg-gray-200"
-                style={{
-                  display: loadImages.includes(item.id) ? "none" : "block",
-                }}
-              ></div>
-              <img
-                src={item.img.length > 0 ? item.img[0].url : ""}
-                alt={item.uid}
-                className="rounded-t-lg  min-h-52 object-center object-cover max-h-52"
-                onLoad={() => handleImageLoad(item.id)}
-                style={{
-                  display: loadImages.includes(item.id) ? "block" : "none",
-                }}
-              />
-              <CardCar
-                name={item.name}
-                city={item.city}
-                km={item.km}
-                model={item.model}
-                price={item.price}
-                year={item.year}
-                key={item.id}
-              />
-            </Link>
-          );
-        })}
-      </div>
+      {load && cars.length >= 1 && (
+        <>
+          <h1 className="text-center text-xl md:text-3xl 2xl:text-4xl md:my-5 xl:my-10 text-[#2E2E37]">
+            Carros novos e seminovos no Brasil...
+          </h1>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3  xl:grid-cols-4 gap-10">
+            {cars.map((item) => {
+              return (
+                <Link
+                  to={`/details/${item.id}`}
+                  key={item.id}
+                  className="bg-white flex flex-col rounded-lg shadow-xl border-2"
+                >
+                  <div
+                    className="w-full min-h-52 rounded-t-lg bg-gray-200 animate-pulse"
+                    style={{
+                      display: loadImages.includes(item.id) ? "none" : "block",
+                    }}
+                  ></div>
+                  <img
+                    src={item.img.length > 0 ? item.img[0].url : ""}
+                    alt={item.uid}
+                    className="rounded-t-lg  min-h-52 object-center object-cover max-h-52 "
+                    onLoad={() => handleImageLoad(item.id)}
+                    style={{
+                      display: loadImages.includes(item.id) ? "block" : "none",
+                    }}
+                  />
+                  <CardCar
+                    name={item.name}
+                    city={item.city}
+                    km={item.km}
+                    model={item.model}
+                    price={item.price}
+                    year={item.year}
+                    key={item.id}
+                  />
+                </Link>
+              );
+            })}
+          </div>
+        </>
+      )}
     </section>
   );
 }
