@@ -107,8 +107,9 @@ export default function Dashboard() {
   }
 
   return (
-    <div className=" flex flex-col gap-5 ">
+    <div className="flex flex-col gap-5 ">
       <PanelDashboard />
+
       {!load && <CardCarLoad />}
 
       {load && cars.length === 0 && (

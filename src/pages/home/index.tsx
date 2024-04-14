@@ -72,17 +72,22 @@ export default function Home() {
         <input
           type="text"
           placeholder="Digite o nome do carro..."
-          className="border-2 p-5 w-9/12 lg:w-6/12  rounded-lg h-full outline-none placeholder:text-lg"
+          className="border-2 p-5 w-9/12 lg:w-7/12  xl:w-6/12 rounded-lg h-full outline-none placeholder:text-lg"
         />
-        <button className="w-3/12 lg:w-1/12  bg-[#E11138] text-white rounded-lg  font-semibold text-lg h-[100%]">
+        <button className="w-3/12 lg:w-2/12 xl:w-1/12  bg-[#E11138] text-white rounded-lg  font-semibold text-lg h-[100%]">
           Buscar
         </button>
       </div>
 
-      {!load && <CardCarLoad />}
+      {!load && (
+        <>
+          <h1 className="text-center text-xl md:text-3xl 2xl:text-4xl md:my-5 xl:my-10 text-[#2E2E37]"></h1>
+          <CardCarLoad />
+        </>
+      )}
 
       {load && cars.length === 0 && (
-        <h1 className="text-center text-xl md:text-3xl 2xl:text-4xl md:my-5 xl:my-10 text-[#2E2E37]">
+        <h1 className="text-center text-xl md:text-3xl 2xl:text-4xl md:my-5 xl:my-10 text-[#2E2E37] ">
           No momento não temos nenhum carro anunciado
         </h1>
       )}
@@ -92,13 +97,13 @@ export default function Home() {
           <h1 className="text-center text-xl md:text-3xl 2xl:text-4xl md:my-5 xl:my-10 text-[#2E2E37]">
             Carros novos e seminovos no Brasil...
           </h1>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3  xl:grid-cols-4 gap-10">
+          <div className="grid grid-cols-1  md:grid-cols-2 lg:grid-cols-3  2xl:grid-cols-4 gap-10">
             {cars.map((item) => {
               return (
                 <Link
                   to={`/details/${item.id}`}
                   key={item.id}
-                  className="bg-white flex flex-col rounded-lg shadow-xl border-2"
+                  className="bg-white  flex flex-col rounded-lg shadow-xl border-2"
                 >
                   <div
                     className="w-full min-h-52 rounded-t-lg bg-gray-200 animate-pulse"

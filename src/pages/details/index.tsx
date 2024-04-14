@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { db } from "../../services/firebaseConnection";
 import { FaWhatsapp } from "react-icons/fa";
-import CardCarLoad from "../../components/cardCarLoad";
+import CardCarLoadDetail from "../../components/cardCarLoadDetail";
 interface CarsProps {
   img: ImageProps[];
   name: string;
@@ -71,8 +71,8 @@ export default function Details() {
   }
 
   return (
-    <div>
-      {!load && <CardCarLoad />}
+    <>
+      {!load && <CardCarLoadDetail />}
 
       {load && car && (
         <main
@@ -160,6 +160,6 @@ export default function Details() {
           </div>
         </main>
       )}
-    </div>
+    </>
   );
 }
