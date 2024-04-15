@@ -4,7 +4,7 @@ import { Link } from "react-router-dom";
 import { db } from "../../services/firebaseConnection";
 import CardCar from "../../components/cardCar";
 import CardCarLoad from "../../components/cardCarLoad";
-
+import { Swiper, SwiperSlide } from "swiper/react";
 interface CarsProps {
   img: ImageProps[];
   name: string;
@@ -29,6 +29,7 @@ export default function Home() {
   const [cars, setCars] = useState<CarsProps[]>([]);
   const [loadImages, setLoadImages] = useState<string[]>([]);
   const [load, setLoad] = useState(false);
+  const [sliderPerview] = useState<number>();
 
   useEffect(() => {
     function loadCars() {
@@ -100,26 +101,41 @@ export default function Home() {
           <div className="grid grid-cols-1  md:grid-cols-2 lg:grid-cols-3  2xl:grid-cols-4 gap-10">
             {cars.map((item) => {
               return (
-                <Link
-                  to={`/details/${item.id}`}
+                <div
                   key={item.id}
-                  className="bg-white  flex flex-col rounded-lg shadow-xl border-2"
+                  className="bg-white flex flex-col rounded-lg shadow-xl border-2"
                 >
-                  <div
-                    className="w-full min-h-52 rounded-t-lg bg-gray-200 animate-pulse"
-                    style={{
-                      display: loadImages.includes(item.id) ? "none" : "block",
-                    }}
-                  ></div>
-                  <img
-                    src={item.img.length > 0 ? item.img[0].url : ""}
-                    alt={item.uid}
-                    className="rounded-t-lg  min-h-52 object-center object-cover max-h-52 "
-                    onLoad={() => handleImageLoad(item.id)}
-                    style={{
-                      display: loadImages.includes(item.id) ? "block" : "none",
-                    }}
-                  />
+                  <Swiper
+                    slidesPerView={sliderPerview}
+                    navigation
+                    pagination={{ clickable: true }}
+                  >
+                    {item?.img.map((item) => {
+                      return (
+                        <SwiperSlide key={item.uid} className="">
+                          <div
+                            className="w-full min-h-52 rounded-t-lg bg-gray-200 animate-pulse"
+                            style={{
+                              display: loadImages.includes(item?.uid)
+                                ? "none"
+                                : "block",
+                            }}
+                          ></div>
+                          <img
+                            src={item.url}
+                            alt={item.name}
+                            className="rounded-t-lg  min-h-52 object-center object-cover max-h-52"
+                            onLoad={() => handleImageLoad(item?.uid)}
+                            style={{
+                              display: loadImages.includes(item?.uid)
+                                ? "block"
+                                : "none",
+                            }}
+                          />
+                        </SwiperSlide>
+                      );
+                    })}
+                  </Swiper>
                   <CardCar
                     name={item.name}
                     city={item.city}
@@ -129,7 +145,13 @@ export default function Home() {
                     year={item.year}
                     key={item.id}
                   />
-                </Link>
+                  <Link
+                    to={`/details/${item.id}`}
+                    className="mx-3 mb-3 p-3 rounded-lg text-center bg-[#2E2D37] text-white"
+                  >
+                    Ver mais
+                  </Link>
+                </div>
               );
             })}
           </div>
