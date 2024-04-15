@@ -58,9 +58,9 @@ export default function Details() {
           created: snapshot.data()?.created,
           description: snapshot.data()?.description,
         });
-      });
 
-      setLoad(true);
+        setLoad(true);
+      });
     }
 
     loadCarDetail();
@@ -71,7 +71,10 @@ export default function Details() {
   }
 
   return (
-    <>
+    <div className="flex flex-col gap-5">
+      {/*       <h1 className="text-center text-xl md:text-3xl 2xl:text-4xl md:my-5 xl:my-10 text-[#2E2E37]">
+        Detalhes
+      </h1> */}
       {!load && <CardCarLoadDetail />}
 
       {load && car && (
@@ -160,6 +163,6 @@ export default function Details() {
           </div>
         </main>
       )}
-    </>
+    </div>
   );
 }
