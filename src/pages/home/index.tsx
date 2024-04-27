@@ -259,7 +259,7 @@ export default function Home() {
               return (
                 <div
                   key={item.id}
-                  className="bg-deep-orange-700 h-[100px]  flex flex-col rounded-lg shadow-xl border-2"
+                  className="bg-deep-orange-700 h-[500px]  flex flex-col rounded-lg shadow-xl border-2"
                 >
                   <Swiper
                     slidesPerView={sliderPerview}
