@@ -37,6 +37,7 @@ const data: Filters[] = [
   { name: "BMW", value: "BMW" },
   { name: "Chevrolet", value: "Chevrolet" },
   { name: "Ford", value: "Ford" },
+  { name: "Fiat", value: "Fiat" },
   { name: "Honda", value: "Honda" },
   { name: "Hyundai", value: "Hyundai" },
   { name: "Jaguar", value: "Jaguar" },
@@ -52,7 +53,6 @@ export default function Home() {
   const [loadImages, setLoadImages] = useState<string[]>([]);
   const [load, setLoad] = useState(false);
   const [sliderPerview] = useState<number>();
-  const [sliderPerviewFilter, setSliderPerViewFilter] = useState<number>(7);
   const [search, setSearch] = useState("");
   const [selectedBrand, setSelectedBrand] = useState("");
 
@@ -173,7 +173,7 @@ export default function Home() {
     setLoadImages((prevImagesLoads) => [...prevImagesLoads, id]);
   }
 
-  useEffect(() => {
+  /*  useEffect(() => {
     function handleResize() {
       if (window.innerWidth <= 640) {
         setSliderPerViewFilter(2);
@@ -186,7 +186,7 @@ export default function Home() {
       } else if (window.innerWidth <= 1536) {
         setSliderPerViewFilter(6);
       } else {
-        setSliderPerViewFilter(7);
+        setSliderPerViewFilter(6);
       }
     }
 
@@ -197,7 +197,7 @@ export default function Home() {
     return () => {
       window.removeEventListener("resize", handleResize);
     };
-  }, []);
+  }, []); */
 
   return (
     <section className="flex flex-col gap-5 ">
@@ -217,26 +217,22 @@ export default function Home() {
         </button>
       </div>
 
-      <div className="flex gap-3 items-center justify-between w-full  mx-auto ">
-        <Swiper slidesPerView={sliderPerviewFilter}>
-          {data.map((item, index) => {
-            return (
-              <SwiperSlide key={index} className="w-[270px] mx-2">
-                <button
-                  key={index}
-                  onClick={() => Filtro(item.value)}
-                  className={`p-2 rounded-lg  w-full ${
-                    selectedBrand === item.name
-                      ? "bg-[#E11138] text-white"
-                      : "bg-[#EEEEEE]"
-                  }`}
-                >
-                  {item.name}
-                </button>
-              </SwiperSlide>
-            );
-          })}
-        </Swiper>
+      <div className="flex gap-3 items-center justify-between w-full scrool overflow-x-auto ">
+        {data.map((item, index) => {
+          return (
+            <button
+              key={index}
+              onClick={() => Filtro(item.value)}
+              className={`p-2 rounded-lg  min-w-[150px] mb-4 ${
+                selectedBrand === item.name
+                  ? "bg-[#E11138] text-white"
+                  : "bg-[#EEEEEE]"
+              }`}
+            >
+              {item.name}
+            </button>
+          );
+        })}
       </div>
 
       {!load && (
@@ -263,7 +259,7 @@ export default function Home() {
               return (
                 <div
                   key={item.id}
-                  className="bg-white flex flex-col rounded-lg shadow-xl border-2"
+                  className="bg-white sm:max-w-[500px] flex flex-col rounded-lg shadow-xl border-2"
                 >
                   <Swiper
                     slidesPerView={sliderPerview}

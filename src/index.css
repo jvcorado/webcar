@@ -49,3 +49,25 @@ span {
   height: 100%;
   object-fit: cover;
 }
+
+.scrool::-webkit-scrollbar {
+  width: 10px; /* Largura da barra de rolagem */
+}
+
+/* Cor de fundo da barra de rolagem */
+.scrool::-webkit-scrollbar-track {
+  background-color: transparent;
+  width: 100%;
+}
+
+/* Cor do manipulador da barra de rolagem */
+.scrool::-webkit-scrollbar-thumb {
+  background-color: #2e2d37;
+
+  border-radius: 6px;
+}
+
+/* Mudança de cor quando o manipulador da barra de rolagem é movido */
+.scrool::-webkit-scrollbar-thumb:hover {
+  background-color: #2e2d37;
+}

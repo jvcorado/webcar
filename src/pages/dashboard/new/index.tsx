@@ -47,6 +47,7 @@ const data: Filters[] = [
   { name: "BMW", value: "BMW" },
   { name: "Chevrolet", value: "Chevrolet" },
   { name: "Ford", value: "Ford" },
+  { name: "Fiat", value: "Fiat" },
   { name: "Honda", value: "Honda" },
   { name: "Hyundai", value: "Hyundai" },
   { name: "Jaguar", value: "Jaguar" },
