@@ -1,6 +1,6 @@
 import { doc, getDoc } from "firebase/firestore";
 import { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { db } from "../../services/firebaseConnection";
 import { FaWhatsapp } from "react-icons/fa";
 import CardCarLoadDetail from "../../components/cardCarLoadDetail";
@@ -35,6 +35,7 @@ export default function Details() {
   const [loadImages, setLoadImages] = useState<string[]>([]);
   const [load, setLoad] = useState(false);
   const [sliderPerview] = useState<number>(1);
+  const navigate = useNavigate();
 
   useEffect(() => {
     async function loadCarDetail() {
@@ -45,6 +46,9 @@ export default function Details() {
       const carsRef = doc(db, "cars", id);
 
       getDoc(carsRef).then((snapshot) => {
+        if (!snapshot.data()) {
+          navigate("/");
+        }
         setCar({
           id: snapshot.data()?.id,
           name: snapshot.data()?.name,

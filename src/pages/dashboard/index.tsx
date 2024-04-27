@@ -13,8 +13,8 @@ import {
 import { FiTrash2 } from "react-icons/fi";
 import { deleteObject, ref } from "firebase/storage";
 import CardCar from "../../components/cardCar";
-import { Link } from "react-router-dom";
 import CardCarLoad from "../../components/cardCarLoad";
+import New from "./new";
 
 interface CarsProps {
   img: ImageProps[];
@@ -88,39 +88,36 @@ export default function Dashboard() {
   }
 
   async function handleCarRemove(car: CarsProps) {
-    const ItemCar = car;
+    if (window.confirm("Deseja excluir anúncio?")) {
+      const ItemCar = car;
 
-    const carDocRef = doc(db, "cars", ItemCar.id);
-    await deleteDoc(carDocRef);
+      const carDocRef = doc(db, "cars", ItemCar.id);
+      await deleteDoc(carDocRef);
 
-    ItemCar.img.map(async (images) => {
-      const imagePath = `images/${images.uid}/${images.name}`;
-      const imageRef = ref(storage, imagePath);
+      ItemCar.img.map(async (images) => {
+        const imagePath = `images/${images.uid}/${images.name}`;
+        const imageRef = ref(storage, imagePath);
 
-      try {
-        await deleteObject(imageRef);
-        setCars(cars.filter((item) => item.id !== ItemCar.id));
-      } catch (error) {
-        console.log("Erro ao remover imagem", error);
-      }
-    });
+        try {
+          await deleteObject(imageRef);
+          setCars(cars.filter((item) => item.id !== ItemCar.id));
+        } catch (error) {
+          console.log("Erro ao remover imagem", error);
+        }
+      });
+    }
   }
 
   return (
     <div className="flex flex-col gap-5 ">
-      <PanelDashboard />
-
       {!load && <CardCarLoad />}
 
-      {load && cars.length === 0 && (
-        <p className="text-lg  md:text-3xl leading-10">
-          Crie seu primeiro anúncio:{" "}
-          <Link to={"/dashboard/new-car"}>Criar anúncio</Link>
-        </p>
-      )}
+      {load && cars.length === 0 && <New />}
 
       {load && cars.length >= 1 && (
         <>
+          <PanelDashboard />
+
           <p className="text-lg  md:text-3xl leading-10">Seus anúncios:</p>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3  xl:grid-cols-4 gap-10">
             {cars.map((item) => {

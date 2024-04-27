@@ -19,8 +19,9 @@ import { MdDelete } from "react-icons/md";
 import { addDoc, collection } from "firebase/firestore";
 
 const schema = z.object({
-  name: z.string().min(1, { message: "Nome obrigatório!" }),
+  name: z.string().toUpperCase().min(1, { message: "Nome obrigatório!" }),
   model: z.string().min(1, { message: "Modelo obrigatório!" }),
+  marca: z.string().toUpperCase().min(1, { message: "Marca obrigatório!" }),
   year: z.string().min(4, { message: "Ano obrigatório!" }),
   km: z.string().min(4, { message: "KM rodados obrigatório!" }),
   price: z.string().min(1, { message: "Preço obrigatório!" }),
@@ -35,6 +36,26 @@ const schema = z.object({
 });
 
 type FormData = z.infer<typeof schema>;
+
+interface Filters {
+  name: string;
+  value: string;
+}
+
+const data: Filters[] = [
+  { name: "Audi", value: "Audi" },
+  { name: "BMW", value: "BMW" },
+  { name: "Chevrolet", value: "Chevrolet" },
+  { name: "Ford", value: "Ford" },
+  { name: "Honda", value: "Honda" },
+  { name: "Hyundai", value: "Hyundai" },
+  { name: "Jaguar", value: "Jaguar" },
+  { name: "Kia", value: "Kia" },
+  { name: "Mercedes-Benz", value: "Mercedes-Benz" },
+  { name: "Nissan", value: "Nissan" },
+  { name: "Toyota", value: "Toyota" },
+  { name: "Volkswagen", value: "Volkswagen" },
+];
 
 interface ImageProps {
   uid: string;
@@ -126,6 +147,7 @@ export default function New() {
     addDoc(collection(db, "cars"), {
       name: data.name,
       model: data.model,
+      marca: data.marca,
       year: data.year,
       price: data.price,
       km: data.km,
@@ -233,15 +255,39 @@ export default function New() {
             register={register}
           />
         </div>
-        <div>
-          <label>Modelo</label>
-          <Input
-            name="model"
-            placeholder="Ex: Flex Manual Completo"
-            type="text"
-            error={errors.model?.message}
-            register={register}
-          />
+
+        <div className="flex items-center justify-between gap-5">
+          <div className="flex-1">
+            <label>Modelo</label>
+            <Input
+              name="model"
+              placeholder="Ex: Flex Manual Completo"
+              type="text"
+              error={errors.model?.message}
+              register={register}
+            />
+          </div>
+          <div className="flex-1">
+            <label htmlFor="marca">Marca</label>
+            <select
+              required
+              id="marca"
+              className="p-3 w-full border-2 outline-none rounded-lg"
+              {...register("marca")}
+            >
+              <option value="">Selecione uma marca</option>
+              {data.map((item, index) => (
+                <option key={index} value={item.value}>
+                  {item.name}
+                </option>
+              ))}
+            </select>
+            {errors.marca && (
+              <p className="text-red-600 font-semibold mt-1">
+                {errors.marca?.message}
+              </p>
+            )}
+          </div>
         </div>
         <div className="flex items-center justify-between gap-5">
           <div className="flex-1">
