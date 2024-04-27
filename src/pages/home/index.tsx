@@ -254,12 +254,12 @@ export default function Home() {
             Carros novos e seminovos no Brasil...
           </h1>
 
-          <div className="grid grid-cols-1 sm:max-w-[300px] md:grid-cols-2 lg:grid-cols-3  2xl:grid-cols-4 gap-10  justify-center">
+          <div className="grid grid-cols-1  md:grid-cols-2 lg:grid-cols-3  2xl:grid-cols-4 gap-10  justify-center">
             {cars.map((item) => {
               return (
                 <div
                   key={item.id}
-                  className="bg-white  flex flex-col rounded-lg shadow-xl border-2"
+                  className="bg-deep-orange-700 h-[100px]  flex flex-col rounded-lg shadow-xl border-2"
                 >
                   <Swiper
                     slidesPerView={sliderPerview}
